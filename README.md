@@ -14,6 +14,20 @@ The notebook is kept unchanged for reference; all of its code now lives in
 
 ---
 
+## Learn more
+
+- 🎓 **[Join our Advanced AI Engineering batch](https://www.krishnaik.in/liveclass2/Advanded-Route?id=12)**
+  — a hands-on live cohort where we build things exactly like this, end to end.
+- 📖 **[Learn the Annotated Transformer](https://nlp.seas.harvard.edu/annotated-transformer/)**
+  — the original Harvard NLP line-by-line walkthrough this repo is refactored from.
+- 📄 **[Explore the paper](https://arxiv.org/abs/1605.00459)**
+  — *Multi30K: Multilingual English-German Image Descriptions* (Elliott et al., 2016),
+  the dataset behind the German→English example here.
+- 🗂️ **[Explore the dataset](https://huggingface.co/datasets/bentrevett/multi30k)**
+  — `bentrevett/multi30k` on Hugging Face, loaded automatically by the training scripts.
+
+---
+
 ## Install
 
 ```bash
