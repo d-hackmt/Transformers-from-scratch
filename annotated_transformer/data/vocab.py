@@ -59,7 +59,11 @@ def _build_one(counter: Counter) -> Vocab:
 
 
 def build_vocabulary(spacy_de, spacy_en):
-    """Build source (German) and target (English) vocabularies from Multi30k."""
+    """Build the German and English vocabularies from Multi30k.
+
+    Returns ``(vocab_de, vocab_en)`` - always in that order.  The caller decides
+    which is source and which is target based on the translation direction.
+    """
     from datasets import load_dataset
 
     def tokenize_de(text):
@@ -80,15 +84,15 @@ def build_vocabulary(spacy_de, spacy_en):
 
 
 def load_vocab(spacy_de, spacy_en, cache_path: str = "vocab.pt"):
-    """Load the cached vocab from ``cache_path``, building and saving it if absent."""
+    """Load ``(vocab_de, vocab_en)`` from ``cache_path``, building + saving if absent."""
     if not exists(cache_path):
-        vocab_src, vocab_tgt = build_vocabulary(spacy_de, spacy_en)
-        torch.save((vocab_src, vocab_tgt), cache_path)
+        vocab_de, vocab_en = build_vocabulary(spacy_de, spacy_en)
+        torch.save((vocab_de, vocab_en), cache_path)
     else:
-        vocab_src, vocab_tgt = torch.load(
+        vocab_de, vocab_en = torch.load(
             cache_path, map_location="cpu", weights_only=False
         )
     print("Finished.\nVocabulary sizes:")
-    print(len(vocab_src))
-    print(len(vocab_tgt))
-    return vocab_src, vocab_tgt
+    print("  de:", len(vocab_de))
+    print("  en:", len(vocab_en))
+    return vocab_de, vocab_en

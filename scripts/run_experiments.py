@@ -73,12 +73,12 @@ def set_seed(seed: int) -> None:
         torch.cuda.manual_seed_all(seed)
 
 
-def decode_samples(model, pairs, vocab_src, vocab_tgt, spacy_de, device, max_len):
-    """Translate the source side of each (de, en) pair; return {src, ref, hyp}."""
+def decode_samples(model, pairs, vocab_src, vocab_tgt, spacy_src, device, max_len):
+    """Translate the source side of each (src, tgt) pair; return {src, ref, hyp}."""
     rows = []
-    for de_text, en_text in pairs:
-        hyp = translate_sentence(model, de_text, vocab_src, vocab_tgt, spacy_de, device, max_len=max_len)
-        rows.append({"src": de_text, "ref": en_text, "hyp": hyp})
+    for src_text, ref_text in pairs:
+        hyp = translate_sentence(model, src_text, vocab_src, vocab_tgt, spacy_src, device, max_len=max_len)
+        rows.append({"src": src_text, "ref": ref_text, "hyp": hyp})
     return rows
 
 
@@ -104,6 +104,8 @@ def main():
                         help="cap BLEU decoding for a quick check (0 = use the whole split)")
     parser.add_argument("--resume", action="store_true",
                         help="continue from <out>/checkpoints/_resume.pt if it exists")
+    parser.add_argument("--stop-after", type=int, default=0,
+                        help="finish this epoch (incl. checkpoint/BLEU) then stop cleanly; resume later with --resume")
     # --- crash / overheat protection ---------------------------------
     parser.add_argument("--cooldown-seconds", type=int, default=0,
                         help="pause this long after every epoch so the PC's power/thermals recover")
@@ -111,8 +113,11 @@ def main():
                         help="GPU temp (C) above which the cooldown pause is doubled")
     parser.add_argument("--temp-abort", type=int, default=90,
                         help="GPU temp (C) at/above which the run checkpoints and stops")
+    parser.add_argument("--direction", choices=["de-en", "en-de"], default="de-en",
+                        help="translation direction on Multi30k (default de-en)")
     args = parser.parse_args()
 
+    src_lang, tgt_lang = args.direction.split("-")
     set_seed(args.seed)
     device = torch.device("cpu") if args.cpu else pick_device()
     print(f"Device: {device}", flush=True)
@@ -124,15 +129,21 @@ def main():
 
     # --- data -----------------------------------------------------------
     spacy_de, spacy_en = load_tokenizers()
-    vocab_src, vocab_tgt = load_vocab(spacy_de, spacy_en)
+    vocab_de, vocab_en = load_vocab(spacy_de, spacy_en)
+    # map the language vocabs / tokenizer onto source / target for this direction
+    vocab_src, vocab_tgt = (vocab_de, vocab_en) if src_lang == "de" else (vocab_en, vocab_de)
+    spacy_src = spacy_de if src_lang == "de" else spacy_en
     pad_idx = vocab_tgt["<blank>"]
+    print(f"Direction: {args.direction}  (src {src_lang} vocab {len(vocab_src)}, "
+          f"tgt {tgt_lang} vocab {len(vocab_tgt)})", flush=True)
 
     train_dl, valid_dl = create_dataloaders(
         device, vocab_src, vocab_tgt, spacy_de, spacy_en,
         batch_size=args.batch_size, max_padding=args.max_padding, is_distributed=False,
+        direction=args.direction,
     )
-    valid_pairs = list(Multi30kDataset("validation"))
-    test_pairs = list(Multi30kDataset("test"))
+    valid_pairs = list(Multi30kDataset("validation", src_lang, tgt_lang))
+    test_pairs = list(Multi30kDataset("test", src_lang, tgt_lang))
     sample_pairs = valid_pairs[:N_SAMPLES]  # fixed sentences for qualitative tracking
     if args.max_bleu_sentences:
         valid_pairs = valid_pairs[: args.max_bleu_sentences]
@@ -177,11 +188,11 @@ def main():
     )
     monitor.log(f"device={device}  model N={args.n_layers} d_model={args.d_model} "
                 f"d_ff={args.d_ff} heads={args.heads}  batch={args.batch_size}")
-    monitor.log(f"vocab: de={len(vocab_src)}  en={len(vocab_tgt)}")
+    monitor.log(f"direction: {args.direction}  src vocab={len(vocab_src)}  tgt vocab={len(vocab_tgt)}")
 
     metrics = {
         "config": {
-            "direction": "de->en", "dataset": "bentrevett/multi30k",
+            "direction": args.direction, "dataset": "bentrevett/multi30k",
             "epochs": args.epochs, "checkpoint_epochs": args.checkpoint_epochs,
             "batch_size": args.batch_size, "accum_iter": args.accum_iter,
             "base_lr": args.base_lr, "warmup": args.warmup, "max_padding": args.max_padding,
@@ -206,7 +217,7 @@ def main():
         _train_loop(
             args, model, criterion, optimizer, scheduler, monitor, metrics,
             metrics_path, resume_path, ckpt_dir, train_dl, valid_dl, pad_idx,
-            vocab_src, vocab_tgt, spacy_de, valid_pairs, test_pairs, sample_pairs,
+            vocab_src, vocab_tgt, spacy_src, valid_pairs, test_pairs, sample_pairs,
             snap_src, snap_tgt, device, start_epoch,
         )
     except KeyboardInterrupt:
@@ -216,21 +227,29 @@ def main():
         monitor.log("CRASH:\n" + traceback.format_exc())
         raise
 
-    metrics["total_minutes"] = round((time.time() - total_start) / 60, 1)
-    save_metrics(metrics, metrics_path)
-    monitor.render(metrics)
+    last_epoch = metrics["epochs"][-1]["epoch"] if metrics["epochs"] else 0
+    fully_done = last_epoch >= args.epochs
+    if fully_done:
+        metrics["total_minutes"] = round((time.time() - total_start) / 60, 1)
+        save_metrics(metrics, metrics_path)
+        monitor.render(metrics)
 
+    # always (re)generate the report + plots for whatever epochs we have
     monitor.log("writing reports and plots ...")
     written = make_plots(metrics, args.out) + write_reports(metrics, args.out)
     for w in written:
         monitor.log(f"  wrote {w}")
-    monitor.log(f"DONE in {metrics['total_minutes']} min. See {args.out}/comparison.md")
+    if fully_done:
+        monitor.log(f"DONE in {metrics['total_minutes']} min. See {args.out}/comparison.md")
+    else:
+        monitor.log(f"PAUSED at epoch {last_epoch}/{args.epochs}. reports for epochs 1-{last_epoch} "
+                    f"written. resume with --resume. See {args.out}/comparison.md")
 
 
 def _train_loop(
     args, model, criterion, optimizer, scheduler, monitor, metrics,
     metrics_path, resume_path, ckpt_dir, train_dl, valid_dl, pad_idx,
-    vocab_src, vocab_tgt, spacy_de, valid_pairs, test_pairs, sample_pairs,
+    vocab_src, vocab_tgt, spacy_src, valid_pairs, test_pairs, sample_pairs,
     snap_src, snap_tgt, device, start_epoch,
 ):
     for epoch in range(start_epoch, args.epochs + 1):
@@ -278,12 +297,13 @@ def _train_loop(
             monitor.log(f"GPU after epoch {epoch}: {hw['temp_c']:.0f} C, {hw['power_w']:.0f} W, {hw['mem_mb']:.0f} MiB")
 
         if epoch in args.checkpoint_epochs:
-            ckpt = os.path.join(ckpt_dir, f"multi30k_de_en_{epoch}ep.pt")
+            tag = args.direction.replace("-", "_")  # de_en or en_de
+            ckpt = os.path.join(ckpt_dir, f"multi30k_{tag}_{epoch}ep.pt")
             save_atomic(model.state_dict(), ckpt, keep_prev=False)
             monitor.log(f"checkpoint saved: {ckpt}  —  scoring BLEU (this takes a few minutes) ...")
 
-            bv = corpus_bleu(model, valid_pairs, vocab_src, vocab_tgt, spacy_de, device, max_len=args.max_padding)
-            bt = corpus_bleu(model, test_pairs, vocab_src, vocab_tgt, spacy_de, device, max_len=args.max_padding)
+            bv = corpus_bleu(model, valid_pairs, vocab_src, vocab_tgt, spacy_src, device, max_len=args.max_padding)
+            bt = corpus_bleu(model, test_pairs, vocab_src, vocab_tgt, spacy_src, device, max_len=args.max_padding)
             row["bleu_valid"] = round(bv["bleu"], 2)
             row["bleu_test"] = round(bt["bleu"], 2)
             row["bleu_signature"] = bv["signature"]
@@ -291,7 +311,7 @@ def _train_loop(
 
             metrics["samples"][str(epoch)] = decode_samples(
                 model, sample_pairs, vocab_src, vocab_tgt,
-                spacy_de, device, args.max_padding,
+                spacy_src, device, args.max_padding,
             )
 
         metrics["epochs"].append(row)
@@ -311,6 +331,14 @@ def _train_loop(
             resume_path,
         )
         monitor.log(f"resume point saved (epoch {epoch}). safe to stop or lose power here.")
+
+        # planned pause: stop cleanly after this epoch, continue later with --resume
+        if args.stop_after and epoch >= args.stop_after:
+            monitor.log(
+                f"PAUSED after epoch {epoch} (--stop-after {args.stop_after}). "
+                f"resume with:  python scripts/run_experiments.py ... --resume"
+            )
+            return
 
         # let the machine's power/thermals recover before the next epoch
         if epoch < args.epochs:

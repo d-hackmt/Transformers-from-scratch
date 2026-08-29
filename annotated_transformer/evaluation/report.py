@@ -176,10 +176,18 @@ def write_reports(metrics: dict, out_dir: str) -> list:
     checkpoints = [r for r in rows if "bleu_valid" in r]
     written = []
 
+    direction = cfg.get("direction", "de-en").replace("->", "-").replace("_", "-")
+    _names = {"de": "German", "en": "English"}
+    _s, _t = (direction.split("-") + ["en"])[:2]
+    pair = f"{_names.get(_s, _s)} -> {_names.get(_t, _t)}"
+    ck_epochs = ", ".join(str(r["epoch"]) for r in checkpoints) or "-"
+    tag = direction.replace("-", "_")
+
     # --- comparison.md -------------------------------------------------
-    lines = ["# Experiment comparison — 10 vs 20 vs 30 epochs", ""]
-    lines.append("German -> English, Multi30k. One 30-epoch training run; the model")
-    lines.append("was checkpointed and evaluated at 10, 20 and 30 epochs.")
+    lines = [f"# Experiment comparison — {pair} — epochs {ck_epochs}", ""]
+    lines.append(f"{pair}, Multi30k. The model was checkpointed and fully evaluated "
+                 f"(loss, perplexity, accuracy, KL, BLEU valid + test, sample translations) "
+                 f"at epochs {ck_epochs}.")
     lines.append("")
     lines.append("## Configuration")
     lines.append("")
@@ -226,8 +234,8 @@ def write_reports(metrics: dict, out_dir: str) -> list:
     samples = metrics.get("samples", {})
     for r in checkpoints:
         n = r["epoch"]
-        el = [f"# Experiment: {n} epochs", ""]
-        el.append(f"Checkpoint: `checkpoints/multi30k_de_en_{n}ep.pt`")
+        el = [f"# Experiment: {pair}, {n} epochs", ""]
+        el.append(f"Checkpoint: `checkpoints/multi30k_{tag}_{n}ep.pt`")
         el.append("")
         el.append("| metric | value |")
         el.append("|--------|------:|")
@@ -244,8 +252,8 @@ def write_reports(metrics: dict, out_dir: str) -> list:
         _write(pth, "\n".join(el)); written.append(pth)
 
     # --- sample_translations.md (side by side) -----------------------
-    st = ["# Sample translations across checkpoints", ""]
-    st.append("The same fixed German sentences, decoded by each checkpoint.")
+    st = [f"# Sample translations across checkpoints — {pair}", ""]
+    st.append(f"The same fixed {_names.get(_s, _s)} sentences, decoded by each checkpoint.")
     st.append("")
     ref_list = samples.get(str(checkpoints[-1]["epoch"]), []) if checkpoints else []
     for i, base in enumerate(ref_list):

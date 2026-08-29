@@ -70,24 +70,31 @@ def create_dataloaders(
     batch_size: int = 12000,
     max_padding: int = 128,
     is_distributed: bool = True,
+    direction: str = "de-en",
 ):
     """Build train / validation :class:`~torch.utils.data.DataLoader` s for Multi30k.
+
+    ``direction`` is ``"de-en"`` (German -> English, the default) or ``"en-de"``.
+    ``vocab_src`` / ``vocab_tgt`` must already match that direction.
 
     When ``is_distributed`` is True a :class:`DistributedSampler` is used (one
     shard per process); otherwise the loaders simply shuffle.
     """
+    src_lang, tgt_lang = direction.split("-")
+    spacy_src = spacy_de if src_lang == "de" else spacy_en
+    spacy_tgt = spacy_de if tgt_lang == "de" else spacy_en
 
-    def tokenize_de(text):
-        return tokenize(text, spacy_de)
+    def tokenize_src(text):
+        return tokenize(text, spacy_src)
 
-    def tokenize_en(text):
-        return tokenize(text, spacy_en)
+    def tokenize_tgt(text):
+        return tokenize(text, spacy_tgt)
 
     def collate_fn(batch):
         return collate_batch(
             batch,
-            tokenize_de,
-            tokenize_en,
+            tokenize_src,
+            tokenize_tgt,
             vocab_src,
             vocab_tgt,
             device,
@@ -95,8 +102,8 @@ def create_dataloaders(
             pad_id=vocab_src.get_stoi()["<blank>"],
         )
 
-    train_dataset = Multi30kDataset("train")
-    valid_dataset = Multi30kDataset("validation")
+    train_dataset = Multi30kDataset("train", src_lang, tgt_lang)
+    valid_dataset = Multi30kDataset("validation", src_lang, tgt_lang)
 
     train_sampler = DistributedSampler(train_dataset) if is_distributed else None
     valid_sampler = DistributedSampler(valid_dataset) if is_distributed else None

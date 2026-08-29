@@ -244,11 +244,16 @@ class TrainingMonitor:
             if k in ("device", "n_layers", "d_model", "d_ff", "heads", "batch_size", "seed")
         )
 
+        direction = cfg.get("direction", "de-en").replace("->", "-").replace("_", "-")
+        names = {"de": "German", "en": "English"}
+        s, t = (direction.split("-") + ["en"])[:2]
+        pair_title = f"{names.get(s, s)} → {names.get(t, t)}"
+
         return f"""<!doctype html>
 <html lang="en"><head>
 <meta charset="utf-8">
 <meta http-equiv="refresh" content="{self.refresh_seconds}">
-<title>Live training — Multi30k DE→EN</title>
+<title>Live training — Multi30k {direction}</title>
 <style>
   :root {{ --bg:#ffffff; --fg:#1a1a2e; --muted:#6b7280; --card:#f4f5f7; --line:#e5e7eb; --accent:#4f8cff; }}
   @media (prefers-color-scheme: dark) {{
@@ -287,7 +292,7 @@ class TrainingMonitor:
   .card.temp .v {{ color:{gpu_color}; }}
   code {{ font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; }}
 </style></head><body>
-<h1>Multi30k · German → English · live training</h1>
+<h1>Multi30k · {pair_title} · live training</h1>
 <div class="sub">{cfg_html}</div>
 
 {temp_banner}

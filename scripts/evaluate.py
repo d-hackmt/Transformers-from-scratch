@@ -1,10 +1,10 @@
 """Score a single trained checkpoint: perplexity + BLEU + sample translations.
 
 Usage:
-    python scripts/evaluate.py results/checkpoints/multi30k_de_en_30ep.pt
-    python scripts/evaluate.py <ckpt> --split test --n-layers 6 --d-model 512
+    python scripts/evaluate.py results/checkpoints/multi30k_de_en_15ep.pt
+    python scripts/evaluate.py results_ende/checkpoints/multi30k_en_de_10ep.pt --direction en-de
 
-The model-size flags must match how the checkpoint was trained (defaults = base).
+The model-size flags and --direction must match how the checkpoint was trained.
 """
 
 import argparse
@@ -22,17 +22,26 @@ from annotated_transformer.inference.translate import translate_sentence
 from annotated_transformer.model import make_model
 from annotated_transformer.utils import pick_device
 
-SAMPLES = [
-    "Zwei Hunde spielen im Schnee.",
-    "Eine Frau kocht in der Küche.",
-    "Ein Mann fährt mit dem Fahrrad die Straße entlang.",
-    "Ein kleines Mädchen läuft über eine Wiese.",
-]
+SAMPLES = {
+    "de": [
+        "Zwei Hunde spielen im Schnee.",
+        "Eine Frau kocht in der Küche.",
+        "Ein Mann fährt mit dem Fahrrad die Straße entlang.",
+        "Ein kleines Mädchen läuft über eine Wiese.",
+    ],
+    "en": [
+        "Two dogs are playing in the snow.",
+        "A woman is cooking in the kitchen.",
+        "A man is riding a bicycle down the street.",
+        "A little girl is running across a meadow.",
+    ],
+}
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("checkpoint")
+    parser.add_argument("--direction", choices=["de-en", "en-de"], default="de-en")
     parser.add_argument("--split", choices=["validation", "test", "both"], default="both")
     parser.add_argument("--n-layers", type=int, default=6)
     parser.add_argument("--d-model", type=int, default=512)
@@ -42,11 +51,14 @@ def main():
     parser.add_argument("--cpu", action="store_true")
     args = parser.parse_args()
 
+    src_lang, tgt_lang = args.direction.split("-")
     device = torch.device("cpu") if args.cpu else pick_device()
-    print(f"Device: {device}")
+    print(f"Device: {device}  |  direction: {args.direction}")
 
     spacy_de, spacy_en = load_tokenizers()
-    vocab_src, vocab_tgt = load_vocab(spacy_de, spacy_en)
+    vocab_de, vocab_en = load_vocab(spacy_de, spacy_en)
+    vocab_src, vocab_tgt = (vocab_de, vocab_en) if src_lang == "de" else (vocab_en, vocab_de)
+    spacy_src = spacy_de if src_lang == "de" else spacy_en
     pad_idx = vocab_tgt["<blank>"]
 
     model = make_model(
@@ -56,24 +68,26 @@ def main():
     model.load_state_dict(torch.load(args.checkpoint, map_location=device, weights_only=True))
     model.eval()
 
-    # perplexity needs a dataloader (uses the validation split)
     _, valid_dl = create_dataloaders(
         device, vocab_src, vocab_tgt, spacy_de, spacy_en,
         batch_size=32, max_padding=args.max_padding, is_distributed=False,
+        direction=args.direction,
     )
     ppl = corpus_perplexity(model, valid_dl, pad_idx, device)
-    print(f"\nValidation perplexity: {ppl['perplexity']:.2f}  (nll {ppl['nll']:.4f}, {ppl['tokens']} tokens)")
+    print(f"\nValidation perplexity: {ppl['perplexity']:.2f}  "
+          f"(nll {ppl['nll']:.4f}, accuracy {ppl['accuracy'] * 100:.1f}%, {ppl['tokens']} tokens)")
 
     splits = ["validation", "test"] if args.split == "both" else [args.split]
     for split in splits:
-        pairs = list(Multi30kDataset(split))
-        res = corpus_bleu(model, pairs, vocab_src, vocab_tgt, spacy_de, device, max_len=args.max_padding)
+        pairs = list(Multi30kDataset(split, src_lang, tgt_lang))
+        res = corpus_bleu(model, pairs, vocab_src, vocab_tgt, spacy_src, device, max_len=args.max_padding)
         print(f"BLEU ({split}, {res['n']} sents): {res['bleu']:.2f}   {res['signature']}")
 
     print("\nSample translations:")
-    for s in SAMPLES:
-        print(f"  DE: {s}")
-        print(f"  EN: {translate_sentence(model, s, vocab_src, vocab_tgt, spacy_de, device, max_len=args.max_padding)}")
+    for s in SAMPLES[src_lang]:
+        out = translate_sentence(model, s, vocab_src, vocab_tgt, spacy_src, device, max_len=args.max_padding)
+        print(f"  {src_lang.upper()}: {s}")
+        print(f"  {tgt_lang.upper()}: {out}")
 
 
 if __name__ == "__main__":
