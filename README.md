@@ -28,6 +28,14 @@ The notebook is kept unchanged for reference; all of its code now lives in
 
 ---
 
+<img width="1612" height="973" alt="image" src="https://github.com/user-attachments/assets/21df4ddd-8217-4074-ac57-22d7bb0e155c" />
+
+<img width="1878" height="553" alt="image" src="https://github.com/user-attachments/assets/4407a888-4c4d-44c4-8aef-294d37265558" />
+
+<img width="1071" height="758" alt="image" src="https://github.com/user-attachments/assets/c401d007-ef85-41e9-962c-e5052fd81839" />
+
+---
+
 ## Install
 
 ```bash
