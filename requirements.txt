@@ -1,0 +1,29 @@
+# Core model + training
+torch>=2.0
+numpy
+
+# Multi30k data pipeline (Part 3)
+datasets>=2.0          # Hugging Face datasets -> bentrevett/multi30k
+spacy>=3.4             # tokenizers; run the two `spacy download` commands below
+
+# Evaluation (annotated_transformer/evaluation + scripts/run_experiments.py)
+sacrebleu>=2.3          # BLEU score
+matplotlib>=3.6         # result plots
+
+# Visualization (annotated_transformer/viz + scripts/visualize.py)
+altair>=5.0
+pandas>=1.5
+
+# Optional: PNG export for the viz scripts (HTML export needs only altair).
+# Uncomment if you want scripts/visualize.py to also write .png files.
+# vl-convert-python
+
+# After installing, add the two spaCy models used by the Multi30k example.
+#   With pip:
+#     python -m spacy download de_core_news_sm
+#     python -m spacy download en_core_web_sm
+#   With uv (the `spacy download` command needs pip, which uv venvs omit) —
+#   install the model wheels directly:
+#     uv pip install \
+#       "https://github.com/explosion/spacy-models/releases/download/de_core_news_sm-3.8.0/de_core_news_sm-3.8.0-py3-none-any.whl" \
+#       "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl"

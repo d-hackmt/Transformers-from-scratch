@@ -1,0 +1,29 @@
+# virtual environments
+transenv/
+venv/
+.venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# model artifacts / caches (all regenerable)
+# checkpoints (*.pt), the vocab cache, and everything under results/
+*.pt
+vocab.pt
+results/
+outputs/
+.cache/
+wandb/
+# to keep a specific report anyway:  git add -f results/comparison.md
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
