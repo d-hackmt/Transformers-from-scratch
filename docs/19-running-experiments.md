@@ -145,11 +145,15 @@ run. Batch size is the knob if you ever do hit a limit (`--batch-size`).
 
 ## Evaluating a checkpoint later
 
-The saved `.pt` files are just weights. Re-score any of them:
+The saved `.pt` files are just weights. Re-score any of them — by local path, or
+by shorthand (`de-en:<epoch>` / `en-de:<epoch>`), which is fetched from the
+[Hugging Face repo](https://huggingface.co/Diveshj/transformer-from-scratch) if
+not on disk:
 
 ```bash
-python scripts/evaluate.py results/checkpoints/multi30k_de_en_30ep.pt
-# add --cpu to force CPU; match --n-layers/--d-model to how it was trained
+python scripts/evaluate.py de-en:10                 # from HF (or local if present)
+python scripts/evaluate.py en-de:15 --split test
+python scripts/evaluate.py de-en:10 --max-bleu-sentences 50 --cpu   # quick check
 ```
 
 Or translate one sentence in Python:
@@ -160,15 +164,21 @@ from annotated_transformer.data.tokenizer import load_tokenizers
 from annotated_transformer.data.vocab import load_vocab
 from annotated_transformer.model import make_model
 from annotated_transformer.inference import translate_sentence
+from annotated_transformer.hf import resolve
 
 spacy_de, spacy_en = load_tokenizers()
-vocab_src, vocab_tgt = load_vocab(spacy_de, spacy_en)
-model = make_model(len(vocab_src), len(vocab_tgt), N=6)
-model.load_state_dict(torch.load("results/checkpoints/multi30k_de_en_30ep.pt",
+vocab_de, vocab_en = load_vocab(spacy_de, spacy_en)          # vocab.pt: local or HF
+model = make_model(len(vocab_de), len(vocab_en), N=6)
+model.load_state_dict(torch.load(resolve("de-en:10"),        # checkpoint: local or HF
                                  map_location="cpu", weights_only=True))
 print(translate_sentence(model, "Ein Hund spielt im Schnee.",
-                         vocab_src, vocab_tgt, spacy_de, torch.device("cpu")))
+                         vocab_de, vocab_en, spacy_de, torch.device("cpu")))
 ```
+
+All checkpoint / vocab loads go through
+[`annotated_transformer/hf.py`](../annotated_transformer/hf.py): local file if it
+exists, otherwise download from HF and cache. Safe to delete the local `.pt`
+files.
 
 ---
 

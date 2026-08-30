@@ -227,8 +227,42 @@ tail -f results/train.log
 ### Score or use a saved checkpoint later
 
 ```bash
-python scripts/evaluate.py results/checkpoints/multi30k_de_en_30ep.pt   # perplexity + BLEU + samples
-python scripts/plot_results.py                                          # rebuild reports from metrics.json
+python scripts/evaluate.py de-en:10   # perplexity + BLEU + samples for the epoch-10 DE->EN model
+python scripts/evaluate.py en-de:15   # ... epoch-15 EN->DE model
+python scripts/plot_results.py        # rebuild reports from metrics.json
+```
+
+---
+
+## Trained checkpoints (Hugging Face)
+
+The trained models and the vocab cache are too big for git, so they live in a
+Hugging Face model repo:
+**[`Diveshj/transformer-from-scratch`](https://huggingface.co/Diveshj/transformer-from-scratch)**
+(public — no token needed).
+
+```
+results_deen/checkpoints/multi30k_de_en_{10,15}ep.pt     German -> English
+results_ende/checkpoints/multi30k_en_de_{5,10,15}ep.pt   English -> German
+vocab.pt                                                 shared vocab cache
+```
+
+Nothing to download by hand — [`annotated_transformer/hf.py`](annotated_transformer/hf.py)
+resolves paths **local-first, then HF**. If `results*/checkpoints/*.pt` and
+`vocab.pt` aren't on disk they are fetched from the repo and cached in
+`~/.cache/huggingface/`. So you can delete the local copies and everything still
+runs:
+
+```bash
+python scripts/evaluate.py de-en:10        # shorthand -> downloaded from HF
+python scripts/translate.py --checkpoint en-de:10
+```
+
+```python
+from annotated_transformer.hf import resolve
+import torch
+path = resolve("en-de:15")   # local file, or downloaded from HF
+state = torch.load(path, map_location="cpu", weights_only=True)
 ```
 
 ---

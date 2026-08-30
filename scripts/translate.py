@@ -1,10 +1,12 @@
-"""Translate Multi30k validation sentences with a trained checkpoint.
+"""Translate Multi30k validation sentences (German -> English) with a checkpoint.
 
-Requires ``multi30k_model_final.pt`` (produced by ``train_multi30k.py``) and the
-cached ``vocab.pt``.
+The checkpoint (local path or a shorthand like ``de-en:10``) and ``vocab.pt`` are
+pulled from the Hugging Face repo if not present locally.  This helper is
+DE->EN only; for EN->DE use ``scripts/evaluate.py en-de:10``.
 
 Usage:
-    python scripts/translate.py [--examples 5] [--checkpoint multi30k_model_final.pt]
+    python scripts/translate.py                       # de-en:10 from HF
+    python scripts/translate.py --checkpoint de-en:15 --examples 8
 """
 
 import argparse
@@ -19,7 +21,7 @@ from annotated_transformer.inference.translate import run_model_example
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--examples", type=int, default=5)
-    parser.add_argument("--checkpoint", default="multi30k_model_final.pt")
+    parser.add_argument("--checkpoint", default="de-en:10")
     args = parser.parse_args()
 
     spacy_de, spacy_en = load_tokenizers()

@@ -168,18 +168,26 @@ def train_model(vocab_src, vocab_tgt, spacy_de, spacy_en, config):
 
 
 def load_trained_model(vocab_src, vocab_tgt, spacy_de, spacy_en, config=None):
-    """Return a trained model, training it first if the checkpoint is missing."""
+    """Return a trained model: use a local checkpoint, else pull from HF, else train."""
+    from annotated_transformer.hf import resolve
+
     if config is None:
         config = default_config()
     model_path = "%sfinal.pt" % config["file_prefix"]
-    if not os.path.exists(model_path):
-        train_model(vocab_src, vocab_tgt, spacy_de, spacy_en, config)
+
+    src = None
+    if os.path.exists(model_path):
+        src = model_path
+    else:
+        try:
+            src = resolve(model_path)
+        except Exception:
+            train_model(vocab_src, vocab_tgt, spacy_de, spacy_en, config)
+            src = model_path
 
     model = make_model(len(vocab_src), len(vocab_tgt), N=6)
     # map_location="cpu" so a GPU-trained checkpoint also loads on a CPU-only box.
-    model.load_state_dict(
-        torch.load(model_path, map_location="cpu", weights_only=True)
-    )
+    model.load_state_dict(torch.load(src, map_location="cpu", weights_only=True))
     return model
 
 

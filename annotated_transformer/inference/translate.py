@@ -108,9 +108,11 @@ def run_model_example(
     )
 
     print("Loading Trained Model ...")
+    from annotated_transformer.hf import resolve
+
     model = make_model(len(vocab_src), len(vocab_tgt), N=6)
     model.load_state_dict(
-        torch.load(checkpoint, map_location=torch.device("cpu"), weights_only=True)
+        torch.load(resolve(checkpoint), map_location=torch.device("cpu"), weights_only=True)
     )
 
     print("Checking Model Outputs:")

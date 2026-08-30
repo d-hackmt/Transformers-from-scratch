@@ -12,10 +12,11 @@ __pycache__/
 .ipynb_checkpoints/
 
 # model artifacts / caches (all regenerable)
-# checkpoints (*.pt), the vocab cache, and everything under results/
+# checkpoints (*.pt), the vocab cache, and every run-output folder
 *.pt
 vocab.pt
 results/
+results_*/
 outputs/
 .cache/
 wandb/

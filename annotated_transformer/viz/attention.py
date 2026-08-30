@@ -102,7 +102,7 @@ def _viz_stack(model, example, getter_fn, layers, use_target_cols):
 
 
 def get_all_attention_charts(vocab_src, vocab_tgt, spacy_de, spacy_en,
-                             checkpoint="multi30k_model_final.pt"):
+                             checkpoint="de-en:10"):
     """Run one validation example and return the three attention charts.
 
     Returns a dict ``{"encoder_self": ..., "decoder_self": ..., "decoder_src": ...}``.

@@ -4,6 +4,7 @@ numpy
 
 # Multi30k data pipeline (Part 3)
 datasets>=2.0          # Hugging Face datasets -> bentrevett/multi30k
+huggingface_hub>=0.20  # pull trained checkpoints from Diveshj/transformer-from-scratch
 spacy>=3.4             # tokenizers; run the two `spacy download` commands below
 
 # Evaluation (annotated_transformer/evaluation + scripts/run_experiments.py)

@@ -84,14 +84,29 @@ def build_vocabulary(spacy_de, spacy_en):
 
 
 def load_vocab(spacy_de, spacy_en, cache_path: str = "vocab.pt"):
-    """Load ``(vocab_de, vocab_en)`` from ``cache_path``, building + saving if absent."""
-    if not exists(cache_path):
+    """Load ``(vocab_de, vocab_en)``.
+
+    Order of preference: the local ``cache_path``; then the copy on the Hugging
+    Face repo (see :mod:`annotated_transformer.hf`); and only if neither is
+    available, rebuild from the dataset and save it locally.
+    """
+    from annotated_transformer.hf import resolve
+
+    src = None
+    if exists(cache_path):
+        src = cache_path
+    else:
+        try:
+            src = resolve(cache_path)
+        except Exception as exc:  # offline / repo missing -> rebuild
+            print(f"(could not fetch {cache_path} from HF: {exc})")
+
+    if src is not None:
+        vocab_de, vocab_en = torch.load(src, map_location="cpu", weights_only=False)
+    else:
         vocab_de, vocab_en = build_vocabulary(spacy_de, spacy_en)
         torch.save((vocab_de, vocab_en), cache_path)
-    else:
-        vocab_de, vocab_en = torch.load(
-            cache_path, map_location="cpu", weights_only=False
-        )
+
     print("Finished.\nVocabulary sizes:")
     print("  de:", len(vocab_de))
     print("  en:", len(vocab_en))
