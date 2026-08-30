@@ -24,17 +24,19 @@ import re
 HF_REPO = "Diveshj/transformer-from-scratch"
 
 # local top-level folder  ->  folder name inside the HF repo
-_DIRMAP = {"results": "results_deen"}
+# (the DE->EN run has been called both "results" and "results_de_en" locally;
+#  on the HF repo that folder is "results_deen")
+_DIRMAP = {"results": "results_deen", "results_de_en": "results_deen"}
 
 
 def _expand_shorthand(spec: str):
-    """``de-en:10`` -> ``results/checkpoints/multi30k_de_en_10ep.pt`` (else None)."""
+    """``de-en:10`` -> ``results_de_en/checkpoints/multi30k_de_en_10ep.pt`` (else None)."""
     m = re.fullmatch(r"(de-en|en-de):(\d+)", spec.strip())
     if not m:
         return None
     direction, epoch = m.groups()
     tag = direction.replace("-", "_")
-    folder = "results" if direction == "de-en" else "results_ende"
+    folder = "results_de_en" if direction == "de-en" else "results_ende"
     return f"{folder}/checkpoints/multi30k_{tag}_{epoch}ep.pt"
 
 

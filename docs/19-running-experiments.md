@@ -1,7 +1,14 @@
 # 19 · Running the Experiments
 
 How to train the German→English model, on a GPU **or** on a CPU-only machine, and
-reproduce the 10 / 20 / 30-epoch comparison in `results/`.
+reproduce the epoch-by-epoch comparison.
+
+> Output goes to **`results_de_en/`** (German→English) or **`results_ende/`**
+> (English→German, `--direction en-de`), or wherever `--out` points. In this page
+> "`results/`" means whichever one applies. Reports/plots/logs are committed to
+> the repo; the `.pt` checkpoints live on
+> [Hugging Face](https://huggingface.co/Diveshj/transformer-from-scratch) and are
+> fetched on demand — see [Evaluating a checkpoint later](#evaluating-a-checkpoint-later).
 
 Code: [`scripts/run_experiments.py`](../scripts/run_experiments.py),
 [`scripts/evaluate.py`](../scripts/evaluate.py),

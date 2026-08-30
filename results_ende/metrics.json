@@ -1,0 +1,377 @@
+{
+  "config": {
+    "direction": "en-de",
+    "dataset": "bentrevett/multi30k",
+    "epochs": 15,
+    "checkpoint_epochs": [
+      5,
+      10,
+      15
+    ],
+    "batch_size": 32,
+    "accum_iter": 10,
+    "base_lr": 1.0,
+    "warmup": 3000,
+    "max_padding": 72,
+    "n_layers": 6,
+    "d_model": 512,
+    "d_ff": 2048,
+    "heads": 8,
+    "dropout": 0.1,
+    "seed": 42,
+    "device": "cuda",
+    "vocab_src": 11158,
+    "vocab_tgt": 19953
+  },
+  "checkpoint_epochs": [
+    5,
+    10,
+    15
+  ],
+  "epochs": [
+    {
+      "epoch": 1,
+      "train_loss": 6.484759330749512,
+      "val_loss": 4.6261515617370605,
+      "val_perplexity": 214.2686550735443,
+      "val_accuracy": 0.24213040017367393,
+      "kl_snapshot": 0.7498430609703064,
+      "seconds": 360.7,
+      "gpu_temp_c": 67.0,
+      "gpu_power_w": 67.5
+    },
+    {
+      "epoch": 2,
+      "train_loss": 3.9923548698425293,
+      "val_loss": 3.483694314956665,
+      "val_perplexity": 56.502678232112864,
+      "val_accuracy": 0.3667414429408785,
+      "kl_snapshot": 0.16820243000984192,
+      "seconds": 358.2,
+      "gpu_temp_c": 68.0,
+      "gpu_power_w": 119.13
+    },
+    {
+      "epoch": 3,
+      "train_loss": 2.985142469406128,
+      "val_loss": 2.6412193775177,
+      "val_perplexity": 21.354853617170537,
+      "val_accuracy": 0.5014111006585137,
+      "kl_snapshot": 0.17234580218791962,
+      "seconds": 358.0,
+      "gpu_temp_c": 68.0,
+      "gpu_power_w": 114.86
+    },
+    {
+      "epoch": 4,
+      "train_loss": 2.222062826156616,
+      "val_loss": 2.1197028160095215,
+      "val_perplexity": 11.496115792731292,
+      "val_accuracy": 0.596931760619437,
+      "kl_snapshot": 0.11537157744169235,
+      "seconds": 358.2,
+      "gpu_temp_c": 68.0,
+      "gpu_power_w": 80.28
+    },
+    {
+      "epoch": 5,
+      "train_loss": 1.7328972816467285,
+      "val_loss": 1.885446548461914,
+      "val_perplexity": 8.795670145071641,
+      "val_accuracy": 0.6374556769664954,
+      "kl_snapshot": 0.08812587708234787,
+      "seconds": 358.0,
+      "gpu_temp_c": 68.0,
+      "gpu_power_w": 57.69,
+      "bleu_valid": 29.1,
+      "bleu_test": 29.61,
+      "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.6.0"
+    },
+    {
+      "epoch": 6,
+      "train_loss": 1.435971736907959,
+      "val_loss": 1.804347276687622,
+      "val_perplexity": 7.717330948780892,
+      "val_accuracy": 0.6560532600043418,
+      "kl_snapshot": 0.08777371048927307,
+      "seconds": 360.2,
+      "gpu_temp_c": 68.0,
+      "gpu_power_w": 59.13
+    },
+    {
+      "epoch": 7,
+      "train_loss": 1.2223622798919678,
+      "val_loss": 1.7641699314117432,
+      "val_perplexity": 7.370542146192683,
+      "val_accuracy": 0.6645198639554237,
+      "kl_snapshot": 0.06552555412054062,
+      "seconds": 359.8,
+      "gpu_temp_c": 68.0,
+      "gpu_power_w": 95.46
+    },
+    {
+      "epoch": 8,
+      "train_loss": 1.0554003715515137,
+      "val_loss": 1.7314929962158203,
+      "val_perplexity": 7.033524589436165,
+      "val_accuracy": 0.6751573919965265,
+      "kl_snapshot": 0.08175928890705109,
+      "seconds": 359.7,
+      "gpu_temp_c": 68.0,
+      "gpu_power_w": 98.36
+    },
+    {
+      "epoch": 9,
+      "train_loss": 0.919215738773346,
+      "val_loss": 1.704807162284851,
+      "val_perplexity": 6.797535578439744,
+      "val_accuracy": 0.6799334249945727,
+      "kl_snapshot": 0.06527083367109299,
+      "seconds": 359.1,
+      "gpu_temp_c": 68.0,
+      "gpu_power_w": 109.05
+    },
+    {
+      "epoch": 10,
+      "train_loss": 0.8017881512641907,
+      "val_loss": 1.724687933921814,
+      "val_perplexity": 6.8568653498397225,
+      "val_accuracy": 0.6797163325855706,
+      "kl_snapshot": 0.05511841922998428,
+      "seconds": 359.7,
+      "gpu_temp_c": 69.0,
+      "gpu_power_w": 107.65,
+      "bleu_valid": 35.03,
+      "bleu_test": 34.57,
+      "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.6.0"
+    },
+    {
+      "epoch": 11,
+      "train_loss": 0.7014738917350769,
+      "val_loss": 1.7198903560638428,
+      "val_perplexity": 6.849600775934629,
+      "val_accuracy": 0.6842752731746147,
+      "kl_snapshot": 0.059278760105371475,
+      "seconds": 359.3,
+      "gpu_temp_c": 68.0,
+      "gpu_power_w": 99.89
+    },
+    {
+      "epoch": 12,
+      "train_loss": 0.6134440898895264,
+      "val_loss": 1.7357062101364136,
+      "val_perplexity": 6.966397138100628,
+      "val_accuracy": 0.684998914537955,
+      "kl_snapshot": 0.056356824934482574,
+      "seconds": 359.2,
+      "gpu_temp_c": 68.0,
+      "gpu_power_w": 83.19
+    },
+    {
+      "epoch": 13,
+      "train_loss": 0.5385003089904785,
+      "val_loss": 1.7409218549728394,
+      "val_perplexity": 6.9684815029538285,
+      "val_accuracy": 0.6839858166292785,
+      "kl_snapshot": 0.06879722326993942,
+      "seconds": 359.0,
+      "gpu_temp_c": 69.0,
+      "gpu_power_w": 116.85
+    },
+    {
+      "epoch": 14,
+      "train_loss": 0.4722616672515869,
+      "val_loss": 1.7684212923049927,
+      "val_perplexity": 7.254588732659799,
+      "val_accuracy": 0.6821043490845937,
+      "kl_snapshot": 0.06340399384498596,
+      "seconds": 359.5,
+      "gpu_temp_c": 68.0,
+      "gpu_power_w": 59.76
+    },
+    {
+      "epoch": 15,
+      "train_loss": 0.41806793212890625,
+      "val_loss": 1.7942090034484863,
+      "val_perplexity": 7.479351752897359,
+      "val_accuracy": 0.6771112236775454,
+      "kl_snapshot": 0.049790482968091965,
+      "seconds": 359.1,
+      "gpu_temp_c": 68.0,
+      "gpu_power_w": 117.33,
+      "bleu_valid": 34.7,
+      "bleu_test": 32.74,
+      "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.6.0"
+    }
+  ],
+  "samples": {
+    "5": [
+      {
+        "src": "A group of men are loading cotton onto a truck",
+        "ref": "Eine Gruppe von M\u00e4nnern l\u00e4dt Baumwolle auf einen Lastwagen",
+        "hyp": "Eine Gruppe M\u00e4nner kauft Lebensmittel auf einem Lkw ."
+      },
+      {
+        "src": "A man sleeping in a green room on a couch.",
+        "ref": "Ein Mann schl\u00e4ft in einem gr\u00fcnen Raum auf einem Sofa.",
+        "hyp": "Ein Mann schl\u00e4ft in einem gr\u00fcnen Raum auf einem Sofa ."
+      },
+      {
+        "src": "A boy wearing headphones sits on a woman's shoulders.",
+        "ref": "Ein Junge mit Kopfh\u00f6rern sitzt auf den Schultern einer Frau.",
+        "hyp": "Ein Junge mit Kopfh\u00f6rern sitzt auf der Schultern einer Frau ."
+      },
+      {
+        "src": "Two men setting up a blue ice fishing hut on an iced over lake",
+        "ref": "Zwei M\u00e4nner bauen eine blaue Eisfischerh\u00fctte auf einem zugefrorenen See auf",
+        "hyp": "Zwei M\u00e4nner machen eine blaue Bluse auf einem See und einer blauen H\u00fctte ."
+      },
+      {
+        "src": "A balding man wearing a red life jacket is sitting in a small boat.",
+        "ref": "Ein Mann mit beginnender Glatze, der eine rote Rettungsweste tr\u00e4gt, sitzt in einem kleinen Boot.",
+        "hyp": "Ein Mann mit nacktem Oberk\u00f6rper , der eine rote Jacke tr\u00e4gt , sitzt in einem kleinen Boot ."
+      },
+      {
+        "src": "A lady in a red coat, holding a bluish hand bag likely of asian descent, jumping off the ground for a snapshot.",
+        "ref": "Eine Frau in einem rotem Mantel, die eine vermutlich aus Asien stammende Handtasche in einem blauen Farbton h\u00e4lt, springt f\u00fcr einen Schnappschuss in die Luft.",
+        "hyp": "Eine Dame in einem roten Mantel h\u00e4lt einen Teller mit der Hand und macht einen Teller auf dem Boden f\u00fcr einen Fu\u00dfball ."
+      },
+      {
+        "src": "A brown dog is running after the black dog.",
+        "ref": "Ein brauner Hund rennt dem schwarzen Hund hinterher.",
+        "hyp": "Ein brauner Hund l\u00e4uft nach dem schwarzen Hund nach ."
+      },
+      {
+        "src": "A young boy wearing a Giants jersey swings a baseball bat at an incoming pitch.",
+        "ref": "Ein kleiner Junge mit einem Giants-Trikot schwingt einen Baseballschl\u00e4ger in Richtung eines ankommenden Balls.",
+        "hyp": "Ein kleiner Junge in einem Trikot schl\u00e4gt einen Baseball auf einem Ball in einem Wurf des Balls ."
+      }
+    ],
+    "10": [
+      {
+        "src": "A group of men are loading cotton onto a truck",
+        "ref": "Eine Gruppe von M\u00e4nnern l\u00e4dt Baumwolle auf einen Lastwagen",
+        "hyp": "Eine Gruppe M\u00e4nner stellt sich auf einen Lkw auf einen Lkw auf ."
+      },
+      {
+        "src": "A man sleeping in a green room on a couch.",
+        "ref": "Ein Mann schl\u00e4ft in einem gr\u00fcnen Raum auf einem Sofa.",
+        "hyp": "Ein Mann schl\u00e4ft in einem gr\u00fcnen Raum auf einer Couch ."
+      },
+      {
+        "src": "A boy wearing headphones sits on a woman's shoulders.",
+        "ref": "Ein Junge mit Kopfh\u00f6rern sitzt auf den Schultern einer Frau.",
+        "hyp": "Ein Junge mit Kopfh\u00f6rern sitzt auf einer Frau ."
+      },
+      {
+        "src": "Two men setting up a blue ice fishing hut on an iced over lake",
+        "ref": "Zwei M\u00e4nner bauen eine blaue Eisfischerh\u00fctte auf einem zugefrorenen See auf",
+        "hyp": "Zwei M\u00e4nner stellen eine blaue Angel auf einem Holzboden eine aus ."
+      },
+      {
+        "src": "A balding man wearing a red life jacket is sitting in a small boat.",
+        "ref": "Ein Mann mit beginnender Glatze, der eine rote Rettungsweste tr\u00e4gt, sitzt in einem kleinen Boot.",
+        "hyp": "Ein Mann mit Glatzenansatz sitzt in einer roten Schwimmweste auf einem kleinen Boot ."
+      },
+      {
+        "src": "A lady in a red coat, holding a bluish hand bag likely of asian descent, jumping off the ground for a snapshot.",
+        "ref": "Eine Frau in einem rotem Mantel, die eine vermutlich aus Asien stammende Handtasche in einem blauen Farbton h\u00e4lt, springt f\u00fcr einen Schnappschuss in die Luft.",
+        "hyp": "Eine Dame in einem roten Mantel h\u00e4lt einen Beh\u00e4lter mit einem Ausdruck der asiatischen Kleidung von einem Boden springt f\u00fcr eine Kleinigkeit nach vorn ."
+      },
+      {
+        "src": "A brown dog is running after the black dog.",
+        "ref": "Ein brauner Hund rennt dem schwarzen Hund hinterher.",
+        "hyp": "Ein brauner Hund rennt nach dem schwarzen Hund hinterher ."
+      },
+      {
+        "src": "A young boy wearing a Giants jersey swings a baseball bat at an incoming pitch.",
+        "ref": "Ein kleiner Junge mit einem Giants-Trikot schwingt einen Baseballschl\u00e4ger in Richtung eines ankommenden Balls.",
+        "hyp": "Ein kleiner Junge , der ein Trikot tr\u00e4gt , schl\u00e4gt einen Baseball auf einen Ball in einem Ball ."
+      }
+    ],
+    "15": [
+      {
+        "src": "A group of men are loading cotton onto a truck",
+        "ref": "Eine Gruppe von M\u00e4nnern l\u00e4dt Baumwolle auf einen Lastwagen",
+        "hyp": "Eine Gruppe M\u00e4nner stellt sich gegenseitig auf einen Lkw vor ."
+      },
+      {
+        "src": "A man sleeping in a green room on a couch.",
+        "ref": "Ein Mann schl\u00e4ft in einem gr\u00fcnen Raum auf einem Sofa.",
+        "hyp": "Ein Mann schl\u00e4ft in einem gr\u00fcnen Zimmer auf einem Sofa ."
+      },
+      {
+        "src": "A boy wearing headphones sits on a woman's shoulders.",
+        "ref": "Ein Junge mit Kopfh\u00f6rern sitzt auf den Schultern einer Frau.",
+        "hyp": "Ein Junge mit Kopfh\u00f6rern sitzt auf den Schultern einer Frau ."
+      },
+      {
+        "src": "Two men setting up a blue ice fishing hut on an iced over lake",
+        "ref": "Zwei M\u00e4nner bauen eine blaue Eisfischerh\u00fctte auf einem zugefrorenen See auf",
+        "hyp": "Zwei M\u00e4nner stellen eine blaue und decken den See mit ihren Fang ."
+      },
+      {
+        "src": "A balding man wearing a red life jacket is sitting in a small boat.",
+        "ref": "Ein Mann mit beginnender Glatze, der eine rote Rettungsweste tr\u00e4gt, sitzt in einem kleinen Boot.",
+        "hyp": "Ein kahl werdender Mann mit einer roten Schwimmweste sitzt in einem kleinen Boot ."
+      },
+      {
+        "src": "A lady in a red coat, holding a bluish hand bag likely of asian descent, jumping off the ground for a snapshot.",
+        "ref": "Eine Frau in einem rotem Mantel, die eine vermutlich aus Asien stammende Handtasche in einem blauen Farbton h\u00e4lt, springt f\u00fcr einen Schnappschuss in die Luft.",
+        "hyp": "Eine Frau in einem roten Mantel , die einen Umschlag in der Hand h\u00e4lt , Asiaten um den Boden herum afrikanischer Herkunft , springt auf dem Boden ."
+      },
+      {
+        "src": "A brown dog is running after the black dog.",
+        "ref": "Ein brauner Hund rennt dem schwarzen Hund hinterher.",
+        "hyp": "Ein brauner Hund rennt dem schwarzen Hund nach ."
+      },
+      {
+        "src": "A young boy wearing a Giants jersey swings a baseball bat at an incoming pitch.",
+        "ref": "Ein kleiner Junge mit einem Giants-Trikot schwingt einen Baseballschl\u00e4ger in Richtung eines ankommenden Balls.",
+        "hyp": "Ein Junge , der die das Gleichgewicht tr\u00e4gt , schl\u00e4gt einen Baseballschl\u00e4ger vom n\u00e4chsten Schlag ab ."
+      }
+    ]
+  },
+  "distribution": {
+    "context_token": "<s>",
+    "true_token": "Ein",
+    "labels": [
+      "Ein",
+      "Eine",
+      "Einem",
+      "Kleiner",
+      "Blonder",
+      "Der",
+      "Neben",
+      "Jemand",
+      "Junger",
+      "Vater"
+    ],
+    "model": [
+      0.8817,
+      0.0257,
+      0.0008,
+      0.0006,
+      0.0005,
+      0.0005,
+      0.0004,
+      0.0004,
+      0.0002,
+      0.0002
+    ],
+    "target": [
+      0.9,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "kl": 0.049790482968091965
+  },
+  "total_minutes": 142.7
+}

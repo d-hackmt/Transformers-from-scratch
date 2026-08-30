@@ -11,16 +11,16 @@ __pycache__/
 .pytest_cache/
 .ipynb_checkpoints/
 
-# model artifacts / caches (all regenerable)
-# checkpoints (*.pt), the vocab cache, and every run-output folder
+# model artifacts / caches
+# Checkpoints and the vocab cache are large and live on Hugging Face
+# (Diveshj/transformer-from-scratch); code fetches them via annotated_transformer/hf.py.
+# The small run outputs (reports, plots, logs, metrics, live.html) ARE committed.
 *.pt
 vocab.pt
-results/
-results_*/
+results*/checkpoints/
 outputs/
 .cache/
 wandb/
-# to keep a specific report anyway:  git add -f results/comparison.md
 
 # OS / editor
 .DS_Store

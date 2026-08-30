@@ -17,11 +17,11 @@ CPU run (the full model is far too slow on CPU - shrink it):
     python scripts/run_experiments.py --epochs 10 \
         --n-layers 2 --d-model 128 --d-ff 512 --heads 4 --batch-size 16
 
-Outputs (default --out results/):
-    results/metrics.json
-    results/checkpoints/multi30k_de_en_{10,20,30}ep.pt
-    results/comparison.md, experiment-*-epochs.md, sample_translations.md
-    results/plots/*.png
+Outputs go to <out>/ (default: results_de_en/ or results_ende/ by --direction):
+    <out>/metrics.json, train.log, live.html
+    <out>/checkpoints/multi30k_<dir>_{N}ep.pt        (also uploaded to Hugging Face)
+    <out>/comparison.md, experiment-*-epochs.md, sample_translations.md
+    <out>/plots/*.png
 """
 
 import argparse
@@ -98,7 +98,8 @@ def main():
     parser.add_argument("--heads", type=int, default=8)
     parser.add_argument("--dropout", type=float, default=0.1)
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--out", default="results")
+    parser.add_argument("--out", default=None,
+                        help="output dir (default: results_de_en / results_ende by --direction)")
     parser.add_argument("--cpu", action="store_true", help="force CPU even if a GPU is present")
     parser.add_argument("--max-bleu-sentences", type=int, default=0,
                         help="cap BLEU decoding for a quick check (0 = use the whole split)")
@@ -118,6 +119,8 @@ def main():
     args = parser.parse_args()
 
     src_lang, tgt_lang = args.direction.split("-")
+    if args.out is None:
+        args.out = "results_de_en" if args.direction == "de-en" else "results_ende"
     set_seed(args.seed)
     device = torch.device("cpu") if args.cpu else pick_device()
     print(f"Device: {device}", flush=True)

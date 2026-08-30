@@ -1,0 +1,33 @@
+HOW TO RESUME THE MULTI30K TRAINING RUN
+========================================
+
+Stopped after epoch 10 on 2026-08-29 ~10:43 for a GPU cooldown / PC restart.
+Everything needed to continue is saved in this folder. Safe to reboot.
+
+STATE ON DISK
+-------------
+  results/checkpoints/_resume.pt        epoch 10: model + optimizer + scheduler + RNG
+  results/checkpoints/_resume_ep10.pt   identical backup copy (do not delete)
+  results/checkpoints/_resume.pt.prev   epoch 9 fallback
+  results/checkpoints/multi30k_de_en_10ep.pt   the keeper checkpoint (weights only)
+  results/metrics.json                  epochs 1-10, with BLEU @ 10 (valid 35.90 / test 37.04)
+  results/train.log                     full log so far
+  vocab.pt                              vocab cache (project root) - no rebuild needed
+
+TO RESUME (from the project root, after the PC has cooled)
+---------------------------------------------------------
+  "transenv/Scripts/python.exe" scripts/run_experiments.py ^
+      --epochs 30 --checkpoint-epochs 10 20 30 ^
+      --cooldown-seconds 90 --temp-abort 90 --resume
+
+  It will print  "Resuming from epoch 11"  and continue.
+  train.log / metrics.json / live.html are appended/updated, not wiped.
+  Next checkpoints + BLEU at epochs 20 and 30.
+
+IF _resume.pt EVER LOOKS CORRUPT
+-------------------------------
+  copy _resume_ep10.pt over _resume.pt  (or _resume.pt.prev for epoch 9), then --resume.
+
+OPTIONAL, BEFORE RESUMING (needs an Administrator terminal)
+----------------------------------------------------------
+  nvidia-smi -pl 95      # cap GPU power at 95 W (default 120) - eases PSU load

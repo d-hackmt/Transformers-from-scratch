@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta http-equiv="refresh" content="10">
+<title>Live training — Multi30k DE→EN</title>
+<style>
+  :root { --bg:#ffffff; --fg:#1a1a2e; --muted:#6b7280; --card:#f4f5f7; --line:#e5e7eb; --accent:#4f8cff; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#0f1117; --fg:#e6e7ea; --muted:#9aa0aa; --card:#181b23; --line:#2a2f3a; --accent:#4f8cff; }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; padding:24px; background:var(--bg); color:var(--fg);
+         font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; }
+  h1 { font-size:20px; margin:0 0 4px; }
+  h2 { font-size:15px; margin:28px 0 10px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; }
+  .sub { color:var(--muted); margin-bottom:20px; }
+  .cards { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:8px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; min-width:130px; }
+  .card .k { color:var(--muted); font-size:12px; }
+  .card .v { font-size:20px; font-weight:600; margin-top:2px; }
+  .bar { height:8px; background:var(--line); border-radius:6px; overflow:hidden; margin:14px 0; }
+  .bar > i { display:block; height:100%; background:var(--accent); width:75%; }
+  .status { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; background:var(--card);
+            border:1px solid var(--line); border-radius:8px; padding:10px 12px; overflow-x:auto; white-space:nowrap; }
+  table { border-collapse:collapse; width:100%; margin-top:6px; }
+  th,td { text-align:right; padding:6px 10px; border-bottom:1px solid var(--line); }
+  th:first-child,td:first-child { text-align:left; }
+  .charts { display:flex; gap:20px; flex-wrap:wrap; }
+  .charts > div { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px; }
+  .samples { display:grid; gap:10px; }
+  .s { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:10px 12px; }
+  .s .de { font-weight:600; }
+  .s .ref { color:var(--muted); }
+  .s .hyp { color:var(--accent); }
+  .done { background:#22c55e1a; border:1px solid #22c55e; color:var(--fg);
+          border-radius:10px; padding:12px 16px; margin-bottom:16px; font-weight:600; }
+  .alert { background:#ef44441f; border:1px solid #ef4444; color:var(--fg);
+           border-radius:10px; padding:14px 16px; margin-bottom:16px; font-weight:700; font-size:15px; }
+  .warn { background:#f59e0b1f; border:1px solid #f59e0b; color:var(--fg);
+          border-radius:10px; padding:12px 16px; margin-bottom:16px; font-weight:600; }
+  .card.temp .v { color:#22c55e; }
+  code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; }
+</style></head><body>
+<h1>Multi30k · German → English · live training</h1>
+<div class="sub">batch_size=32 · n_layers=6 · d_model=512 · d_ff=2048 · heads=8 · seed=42 · device=cuda</div>
+
+
+
+
+
+<div class="cards">
+  <div class="card temp"><div class="k">GPU temp</div><div class="v">54&deg;C</div><div class="k">14 W &nbsp;|&nbsp; peak 69&deg;C</div></div>
+  <div class="card"><div class="k">epoch</div><div class="v">15 / 20</div></div>
+  <div class="card"><div class="k">elapsed</div><div class="v">15m 59s</div></div>
+  <div class="card"><div class="k">eta</div><div class="v">28m 02s</div></div>
+  <div class="card"><div class="k">val perplexity</div><div class="v">7.49</div></div>
+  <div class="card"><div class="k">token accuracy</div><div class="v" style="color:#f59e0b">68.2%</div></div>
+  <div class="card"><div class="k">best BLEU (test)</div><div class="v" style="color:#22c55e">37.04</div></div>
+</div>
+<div class="bar"><i></i></div>
+<div class="status">Epoch 15/20  ·  batch 881/907  ·  loss 0.36  ·  1251 tok/s  ·  lr 3.8e-04</div>
+
+<p class="sub" style="margin:10px 0 0">GPU temperature guide —
+<span style="color:#22c55e">&lt;70&deg;C safe</span> ·
+<span style="color:#f59e0b">70–80&deg;C warm</span> ·
+<span style="color:#f97316">80–87&deg;C hot</span> ·
+<span style="color:#ef4444">&ge;87&deg;C danger, tell Claude to stop</span></p>
+
+<h2>BLEU &amp; perplexity by checkpoint</h2><div class='cards'><div class='card'><div class='k'>10 epochs</div><div class='v' style='color:#22c55e'>37.04</div><div class='k'>test &nbsp;|&nbsp; valid 35.90 &nbsp;|&nbsp; ppl 6.4</div></div><div class='card'><div class='k'>15 epochs</div><div class='v' style='color:#22c55e'>36.10</div><div class='k'>test &nbsp;|&nbsp; valid 36.13 &nbsp;|&nbsp; ppl 7.5</div></div></div><div class='sub' style='margin-top:8px'>sacreBLEU: <code>nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.6.0</code></div>
+
+<h2>Curves</h2>
+<div class="charts">
+  <div><svg width='380' height='220' style='color:var(--fg)'><line x1='34' y1='186.0' x2='372' y2='186.0' stroke='currentColor' stroke-opacity='0.12'/><text x='2' y='189.0' font-size='9' fill='currentColor' fill-opacity='0.5'>0.4</text><line x1='34' y1='99.0' x2='372' y2='99.0' stroke='currentColor' stroke-opacity='0.12'/><text x='2' y='102.0' font-size='9' fill='currentColor' fill-opacity='0.5'>3.1</text><line x1='34' y1='12.0' x2='372' y2='12.0' stroke='currentColor' stroke-opacity='0.12'/><text x='2' y='15.0' font-size='9' fill='currentColor' fill-opacity='0.5'>5.8</text><path d='M34.0,12.0 L58.1,81.4 L82.3,108.6 L106.4,131.4 L130.6,145.9 L154.7,154.8 L178.9,160.9 L203.0,165.6 L227.1,169.5 L251.3,172.7 L275.4,175.7 L299.6,178.4 L323.7,180.9 L347.9,182.9 L372.0,186.0' fill='none' stroke='#4f8cff' stroke-width='2'/><circle cx='372.0' cy='186.0' r='3' fill='#4f8cff'/><path d='M34.0,64.9 L58.1,97.0 L82.3,121.9 L106.4,136.3 L130.6,142.0 L154.7,144.3 L178.9,145.5 L203.0,145.6 L227.1,145.7 L251.3,145.3 L275.4,145.5 L299.6,144.2 L323.7,143.9 L347.9,143.4 L372.0,141.2' fill='none' stroke='#ff5c8a' stroke-width='2'/><circle cx='372.0' cy='141.2' r='3' fill='#ff5c8a'/><text x='34' y='12' font-size='10' fill='currentColor'><tspan fill='#4f8cff'>● </tspan><tspan>train loss  </tspan><tspan fill='#ff5c8a'>● </tspan><tspan>val loss (KL)  </tspan></text></svg></div>
+  <div><svg width='380' height='220' style='color:var(--fg)'><line x1='34' y1='186.0' x2='372' y2='186.0' stroke='currentColor' stroke-opacity='0.12'/><text x='2' y='189.0' font-size='9' fill='currentColor' fill-opacity='0.5'>27.8</text><line x1='34' y1='99.0' x2='372' y2='99.0' stroke='currentColor' stroke-opacity='0.12'/><text x='2' y='102.0' font-size='9' fill='currentColor' fill-opacity='0.5'>48.4</text><line x1='34' y1='12.0' x2='372' y2='12.0' stroke='currentColor' stroke-opacity='0.12'/><text x='2' y='15.0' font-size='9' fill='currentColor' fill-opacity='0.5'>69.0</text><path d='M34.0,186.0 L58.1,130.8 L82.3,76.2 L106.4,42.7 L130.6,30.4 L154.7,23.3 L178.9,18.9 L203.0,19.0 L227.1,15.8 L251.3,14.0 L275.4,12.0 L299.6,15.0 L323.7,15.4 L347.9,14.1 L372.0,15.5' fill='none' stroke='#f59e0b' stroke-width='2'/><circle cx='372.0' cy='15.5' r='3' fill='#f59e0b'/><text x='34' y='12' font-size='10' fill='currentColor'><tspan fill='#f59e0b'>● </tspan><tspan>token accuracy  </tspan></text></svg></div>
+  <div><svg width='380' height='220' style='color:var(--fg)'><line x1='34' y1='186.0' x2='372' y2='186.0' stroke='currentColor' stroke-opacity='0.12'/><text x='2' y='189.0' font-size='9' fill='currentColor' fill-opacity='0.5'>6.4</text><line x1='34' y1='99.0' x2='372' y2='99.0' stroke='currentColor' stroke-opacity='0.12'/><text x='2' y='102.0' font-size='9' fill='currentColor' fill-opacity='0.5'>67.9</text><line x1='34' y1='12.0' x2='372' y2='12.0' stroke='currentColor' stroke-opacity='0.12'/><text x='2' y='15.0' font-size='9' fill='currentColor' fill-opacity='0.5'>129.5</text><path d='M34.0,12.0 L58.1,138.1 L82.3,172.6 L106.4,181.6 L130.6,184.3 L154.7,185.2 L178.9,185.9 L203.0,185.8 L227.1,186.0 L251.3,185.9 L275.4,186.0 L299.6,185.6 L323.7,185.3 L347.9,185.2 L372.0,184.4' fill='none' stroke='#22c55e' stroke-width='2'/><circle cx='372.0' cy='184.4' r='3' fill='#22c55e'/><text x='34' y='12' font-size='10' fill='currentColor'><tspan fill='#22c55e'>● </tspan><tspan>val perplexity  </tspan></text></svg></div>
+  <div><svg width='380' height='220' style='color:var(--fg)'><line x1='34' y1='186.0' x2='372' y2='186.0' stroke='currentColor' stroke-opacity='0.12'/><text x='2' y='189.0' font-size='9' fill='currentColor' fill-opacity='0.5'>0.1</text><line x1='34' y1='99.0' x2='372' y2='99.0' stroke='currentColor' stroke-opacity='0.12'/><text x='2' y='102.0' font-size='9' fill='currentColor' fill-opacity='0.5'>0.2</text><line x1='34' y1='12.0' x2='372' y2='12.0' stroke='currentColor' stroke-opacity='0.12'/><text x='2' y='15.0' font-size='9' fill='currentColor' fill-opacity='0.5'>0.4</text><path d='M34.0,12.0 L58.1,159.0 L82.3,186.0 L106.4,181.7 L130.6,159.5 L154.7,168.8 L178.9,178.4 L203.0,171.0 L227.1,52.6 L251.3,101.2 L275.4,135.5 L299.6,173.6 L323.7,167.6 L347.9,105.7 L372.0,150.8' fill='none' stroke='#a855f7' stroke-width='2'/><circle cx='372.0' cy='150.8' r='3' fill='#a855f7'/><text x='34' y='12' font-size='10' fill='currentColor'><tspan fill='#a855f7'>● </tspan><tspan>KL(target ‖ model)  </tspan></text></svg></div>
+  <div><svg width='380' height='220' style='color:var(--fg)'><line x1='34' y1='186.0' x2='372' y2='186.0' stroke='currentColor' stroke-opacity='0.12'/><text x='2' y='189.0' font-size='9' fill='currentColor' fill-opacity='0.5'>67.0</text><line x1='34' y1='99.0' x2='372' y2='99.0' stroke='currentColor' stroke-opacity='0.12'/><text x='2' y='102.0' font-size='9' fill='currentColor' fill-opacity='0.5'>71.0</text><line x1='34' y1='12.0' x2='372' y2='12.0' stroke='currentColor' stroke-opacity='0.12'/><text x='2' y='15.0' font-size='9' fill='currentColor' fill-opacity='0.5'>75.0</text><path d='M34.0,120.8 L58.1,77.2 L82.3,55.5 L106.4,33.8 L130.6,33.8 L154.7,33.8 L178.9,33.8 L203.0,33.8 L227.1,12.0 L251.3,33.8 L275.4,99.0 L299.6,142.5 L323.7,142.5 L347.9,164.2 L372.0,186.0' fill='none' stroke='#ef4444' stroke-width='2'/><circle cx='372.0' cy='186.0' r='3' fill='#ef4444'/><text x='34' y='12' font-size='10' fill='currentColor'><tspan fill='#ef4444'>● </tspan><tspan>GPU temp °C  </tspan></text></svg></div>
+</div>
+
+<h2>Prediction vs. target distribution</h2><div class='sub'>after context token <code>&lt;s&gt;</code>, the true next word is <code>A</code> (★). KL(target ‖ model) = <b>0.134</b> — the blue bars should climb toward the green as training proceeds.</div><div class='charts'><div><svg width='560' height='240' style='color:var(--fg)'><text x='30' y='12' font-size='10' fill='currentColor'><tspan fill='#4f8cff'>■ </tspan>model  <tspan fill='#22c55e'>■ </tspan>smoothed target</text><rect x='32.0' y='26.9' width='18.8' height='183.1' fill='#4f8cff' rx='2'/><rect x='52.8' y='22.0' width='18.8' height='188.0' fill='#22c55e' rx='2'/><text x='56.1' y='222.0' font-size='9' fill='currentColor' text-anchor='middle'>A ★</text><rect x='84.2' y='197.8' width='18.8' height='12.2' fill='#4f8cff' rx='2'/><rect x='105.0' y='210.0' width='18.8' height='0.0' fill='#22c55e' rx='2'/><text x='108.3' y='222.0' font-size='9' fill='currentColor' text-anchor='middle'>Blond</text><rect x='136.4' y='209.3' width='18.8' height='0.7' fill='#4f8cff' rx='2'/><rect x='157.2' y='210.0' width='18.8' height='0.0' fill='#22c55e' rx='2'/><text x='160.5' y='222.0' font-size='9' fill='currentColor' text-anchor='middle'>Young</text><rect x='188.6' y='209.6' width='18.8' height='0.4' fill='#4f8cff' rx='2'/><rect x='209.4' y='210.0' width='18.8' height='0.0' fill='#22c55e' rx='2'/><text x='212.7' y='222.0' font-size='9' fill='currentColor' text-anchor='middle'>Brunette</text><rect x='240.8' y='209.7' width='18.8' height='0.3' fill='#4f8cff' rx='2'/><rect x='261.6' y='210.0' width='18.8' height='0.0' fill='#22c55e' rx='2'/><text x='264.9' y='222.0' font-size='9' fill='currentColor' text-anchor='middle'>One</text><rect x='293.0' y='209.8' width='18.8' height='0.2' fill='#4f8cff' rx='2'/><rect x='313.8' y='210.0' width='18.8' height='0.0' fill='#22c55e' rx='2'/><text x='317.1' y='222.0' font-size='9' fill='currentColor' text-anchor='middle'>There</text><rect x='345.2' y='209.8' width='18.8' height='0.2' fill='#4f8cff' rx='2'/><rect x='366.0' y='210.0' width='18.8' height='0.0' fill='#22c55e' rx='2'/><text x='369.3' y='222.0' font-size='9' fill='currentColor' text-anchor='middle'>blond</text><rect x='397.4' y='209.9' width='18.8' height='0.1' fill='#4f8cff' rx='2'/><rect x='418.2' y='210.0' width='18.8' height='0.0' fill='#22c55e' rx='2'/><text x='421.5' y='222.0' font-size='9' fill='currentColor' text-anchor='middle'>Girl</text><rect x='449.6' y='209.9' width='18.8' height='0.1' fill='#4f8cff' rx='2'/><rect x='470.4' y='210.0' width='18.8' height='0.0' fill='#22c55e' rx='2'/><text x='473.7' y='222.0' font-size='9' fill='currentColor' text-anchor='middle'>Tennis</text><rect x='501.8' y='209.9' width='18.8' height='0.1' fill='#4f8cff' rx='2'/><rect x='522.6' y='210.0' width='18.8' height='0.0' fill='#22c55e' rx='2'/><text x='525.9' y='222.0' font-size='9' fill='currentColor' text-anchor='middle'>Dark</text></svg></div></div>
+
+<h2>Metrics</h2>
+<table>
+<tr><th>epoch</th><th>train loss</th><th>val loss (KL)</th><th>perplexity</th><th>accuracy</th><th>KL snap</th><th>BLEU val</th><th>BLEU test</th><th>time</th></tr>
+<tr><td>1</td><td>5.8399</td><td>4.1821</td><td>129.47</td><td>27.8%</td><td>0.351</td><td></td><td></td><td>339s</td></tr><tr><td>2</td><td>3.6641</td><td>3.1769</td><td>40.24</td><td>40.9%</td><td>0.121</td><td></td><td></td><td>341s</td></tr><tr><td>3</td><td>2.8136</td><td>2.3963</td><td>15.84</td><td>53.8%</td><td>0.079</td><td></td><td></td><td>336s</td></tr><tr><td>4</td><td>2.0967</td><td>1.9425</td><td>9.46</td><td>61.8%</td><td>0.086</td><td></td><td></td><td>336s</td></tr><tr><td>5</td><td>1.6446</td><td>1.7654</td><td>7.56</td><td>64.7%</td><td>0.120</td><td></td><td></td><td>337s</td></tr><tr><td>6</td><td>1.3652</td><td>1.6927</td><td>6.91</td><td>66.3%</td><td>0.106</td><td></td><td></td><td>336s</td></tr><tr><td>7</td><td>1.1733</td><td>1.6549</td><td>6.46</td><td>67.4%</td><td>0.091</td><td></td><td></td><td>336s</td></tr><tr><td>8</td><td>1.0268</td><td>1.6535</td><td>6.51</td><td>67.4%</td><td>0.102</td><td></td><td></td><td>336s</td></tr><tr><td>9</td><td>0.9050</td><td>1.6489</td><td>6.37</td><td>68.1%</td><td>0.288</td><td></td><td></td><td>336s</td></tr><tr><td>10</td><td>0.8029</td><td>1.6609</td><td>6.42</td><td>68.5%</td><td>0.212</td><td>35.90</td><td>37.04</td><td>336s</td></tr><tr><td>11</td><td>0.7102</td><td>1.6550</td><td>6.37</td><td>69.0%</td><td>0.158</td><td></td><td></td><td>339s</td></tr><tr><td>12</td><td>0.6246</td><td>1.6949</td><td>6.65</td><td>68.3%</td><td>0.098</td><td></td><td></td><td>334s</td></tr><tr><td>13</td><td>0.5456</td><td>1.7067</td><td>6.84</td><td>68.2%</td><td>0.108</td><td></td><td></td><td>335s</td></tr><tr><td>14</td><td>0.4822</td><td>1.7230</td><td>6.90</td><td>68.5%</td><td>0.204</td><td></td><td></td><td>335s</td></tr><tr><td>15</td><td>0.3863</td><td>1.7907</td><td>7.49</td><td>68.2%</td><td>0.134</td><td>36.13</td><td>36.10</td><td>337s</td></tr>
+</table>
+
+<h2>Sample translations — 15 epochs</h2><div class='samples'><div class='s'><div class='de'>Eine Gruppe von Männern lädt Baumwolle auf einen Lastwagen</div><div class='ref'>ref: A group of men are loading cotton onto a truck</div><div class='hyp'>out: A group of men are putting cotton candy on a truck .</div></div><div class='s'><div class='de'>Ein Mann schläft in einem grünen Raum auf einem Sofa.</div><div class='ref'>ref: A man sleeping in a green room on a couch.</div><div class='hyp'>out: A man sleeps on a couch in a green room .</div></div><div class='s'><div class='de'>Ein Junge mit Kopfhörern sitzt auf den Schultern einer Frau.</div><div class='ref'>ref: A boy wearing headphones sits on a woman&#x27;s shoulders.</div><div class='hyp'>out: A boy with headphones on sits on his shoulder while sitting on a woman .</div></div><div class='s'><div class='de'>Zwei Männer bauen eine blaue Eisfischerhütte auf einem zugefrorenen See auf</div><div class='ref'>ref: Two men setting up a blue ice fishing hut on an iced over lake</div><div class='hyp'>out: Two men are constructing a blue cable - laden in an olive lake .</div></div><div class='s'><div class='de'>Ein Mann mit beginnender Glatze, der eine rote Rettungsweste trägt, sitzt in einem kleinen Boot.</div><div class='ref'>ref: A balding man wearing a red life jacket is sitting in a small boat.</div><div class='hyp'>out: A balding man wearing a red life jacket sits in a small boat .</div></div><div class='s'><div class='de'>Eine Frau in einem rotem Mantel, die eine vermutlich aus Asien stammende Handtasche in einem blauen Farbton hält, springt für einen Schnappschuss in die Luft.</div><div class='ref'>ref: A lady in a red coat, holding a bluish hand bag likely of asian descent, jumping off the ground for a snapshot.</div><div class='hyp'>out: A woman in a red coat holding an assortment of eatable items in a blue mobile area for a photo .</div></div><div class='s'><div class='de'>Ein brauner Hund rennt dem schwarzen Hund hinterher.</div><div class='ref'>ref: A brown dog is running after the black dog.</div><div class='hyp'>out: A brown dog runs after the black dog .</div></div><div class='s'><div class='de'>Ein kleiner Junge mit einem Giants-Trikot schwingt einen Baseballschläger in Richtung eines ankommenden Balls.</div><div class='ref'>ref: A young boy wearing a Giants jersey swings a baseball bat at an incoming pitch.</div><div class='hyp'>out: A little boy with a batman uniform swings a baseball bat at an Olympic ball .</div></div></div>
+
+<p class="sub" style="margin-top:28px">auto-refreshes every 10s · 17:08:33</p>
+</body></html>

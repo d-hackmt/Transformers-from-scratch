@@ -297,7 +297,7 @@ class TrainingMonitor:
 
 {temp_banner}
 
-{"<div class='done'>✓ training complete — " + str(metrics.get("total_minutes", "")) + " min. See results/comparison.md</div>" if finished else ""}
+{"<div class='done'>✓ training complete — " + str(metrics.get("total_minutes", "")) + " min. See " + self.out_dir + "/comparison.md</div>" if finished else ""}
 
 <div class="cards">
   <div class="card temp"><div class="k">GPU temp</div><div class="v">{gpu_temp_str}</div><div class="k">{gpu_sub}</div></div>
